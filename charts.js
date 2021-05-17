@@ -1,3 +1,8 @@
+// declare a global var to pass the weekly washing down to the gauge chart
+// otherwise you have to parse out the value again from metadata
+// in buildCharts - seems redundant.
+var weeklyScrubs = 0.0;
+
 function init() {
   // Grab a reference to the dropdown select element
   var selector = d3.select("#selDataset");
@@ -12,8 +17,8 @@ function init() {
 
     // Use the first sample from the list to build the initial plots
     var firstSample = sampleNames[0];
-    buildCharts(firstSample);
     buildMetadata(firstSample);
+    buildCharts(firstSample);
   });
 }
 
@@ -33,6 +38,10 @@ function buildMetadata(sample) {
     // Filter the data for the object with the desired sample number
     var resultArray = metadata.filter((sampleObj) => sampleObj.id == sample);
     var result = resultArray[0];
+
+    weeklyScrubs = parseFloat(result.wfreq);
+    //console.log("In buildMetadata " + weeklyScrubs);
+
     // Use d3 to select the panel with id of `#sample-metadata`
     var PANEL = d3.select("#sample-metadata");
 
@@ -91,10 +100,10 @@ function buildCharts(sample) {
     var barData = [trace];
     // 9. Create the layout for the bar chart.
     var barLayout = {
-      title: "Top 10 Bacteria Cultures Found",
+      title: "<b>Top 10 Bacteria Cultures Found</b>",
       margin: {
         l: 100,
-        r: 100,
+        r: 25,
         t: 25,
         b: 100,
       },
@@ -103,7 +112,7 @@ function buildCharts(sample) {
     Plotly.newPlot("bar", barData, barLayout);
 
     // Add the Bubble chart
-    // 1. Create the trace for the bubble chart.
+    // Create the bubbleData trace.
     var bubbleData = [
       {
         x: otu_ids,
@@ -118,10 +127,10 @@ function buildCharts(sample) {
       },
     ];
 
-    // 2. Create the layout for the bubble chart.
+    // Create the layout for the bubble chart.
     var bubbleLayout = {
       title: {
-        text: "Bacteria Cultures Per Sample",
+        text: "<b>Bacteria Cultures Per Sample</b>",
         font: { size: 24 },
       },
       xaxis: {
@@ -135,7 +144,39 @@ function buildCharts(sample) {
       width: 1300,
     };
 
-    // 3. Use Plotly to plot the data with the layout.
+    // Plot the data with the layout.
     Plotly.newPlot("bubble", bubbleData, bubbleLayout);
+
+    // Create the trace for the gauge chart.
+    //console.log("Before Gauge " + weeklyScrubs);
+
+    var gaugeData = [
+      {
+        //domain: { x: [0, 1], y: [0, 1] },
+        value: weeklyScrubs,
+        title: {
+          text: "<b>Belly Button Washing Frequency</b><br>Scrubs per Week",
+        },
+        type: "indicator",
+        mode: "gauge+number",
+        gauge: {
+          axis: { range: [0, 10] },
+          bar: { color: "black" },
+          steps: [
+            { range: [0, 2], color: "red" },
+            { range: [2, 4], color: "orange" },
+            { range: [4, 6], color: "yellow" },
+            { range: [6, 8], color: "greenyellow" },
+            { range: [8, 10], color: "green" },
+          ],
+        },
+      },
+    ];
+
+    // Create the layout for the gauge chart.
+    var gaugeLayout = { width: 600, height: 400, margin: { t: 0, b: 0 } };
+
+    // Use Plotly to plot the gauge data and layout.
+    Plotly.newPlot("gauge", gaugeData, gaugeLayout);
   });
 }
