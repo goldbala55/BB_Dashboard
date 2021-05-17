@@ -61,26 +61,26 @@ function buildCharts(sample) {
     var result = sampleArray[0];
     console.log(result);
     // 6. Create variables that hold the otu_ids, otu_labels, and sample_values.
-    var otu_ids = [];
-    var otu_labels = [];
-    var sample_values = [];
+    var otu_ids = result.otu_ids;
+    var otu_labels = result.otu_labels;
+    var sample_values = result.sample_values;
     // 7. Create the yticks for the bar chart.
     // Hint: Get the the top 10 otu_ids and map them in descending order
     //  so the otu_ids with the most bacteria are last.
 
     //var yticks =
-    sample_values = result.sample_values.slice(0, 10).reverse();
-    otu_ids = result.otu_ids
+    sample_values_T10 = sample_values.slice(0, 10).reverse();
+    otu_ids_T10 = otu_ids
       .slice(0, 10)
       .reverse()
       .map((id) => "OTU " + id);
     //console.log(otu_ids);
-    otu_labels = result.otu_labels.slice(0, 10).reverse();
+    otu_labels_T10 = otu_labels.slice(0, 10).reverse();
 
     var trace = {
-      x: sample_values,
-      y: otu_ids,
-      text: otu_labels,
+      x: sample_values_T10,
+      y: otu_ids_T10,
+      text: otu_labels_T10,
       type: "bar",
       orientation: "h",
     };
@@ -101,5 +101,41 @@ function buildCharts(sample) {
     };
     // 10. Use Plotly to plot the data with the layout.
     Plotly.newPlot("bar", barData, barLayout);
+
+    // Add the Bubble chart
+    // 1. Create the trace for the bubble chart.
+    var bubbleData = [
+      {
+        x: otu_ids,
+        y: sample_values,
+        text: otu_labels,
+        mode: "markers",
+        marker: {
+          size: sample_values,
+          color: otu_ids,
+          colorscale: "Earth",
+        },
+      },
+    ];
+
+    // 2. Create the layout for the bubble chart.
+    var bubbleLayout = {
+      title: {
+        text: "Bacteria Cultures Per Sample",
+        font: { size: 24 },
+      },
+      xaxis: {
+        title: {
+          text: "OTU ID",
+          font: { size: 18 },
+        },
+      },
+      hovermode: "closest",
+      height: 600,
+      width: 1300,
+    };
+
+    // 3. Use Plotly to plot the data with the layout.
+    Plotly.newPlot("bubble", bubbleData, bubbleLayout);
   });
 }
