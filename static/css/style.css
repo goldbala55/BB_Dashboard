@@ -1,0 +1,10 @@
+.jumbotron {
+  background-image: url("../images/bacteria-163711_1280.jpg");
+  background-size: 100% 100%;
+  text-align: center;
+  color: white;
+}
+
+.jumbotron h1 {
+  font-family: "Times New Roman', Times, serif";
+}

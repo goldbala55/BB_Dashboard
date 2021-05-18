@@ -8,7 +8,7 @@ function init() {
   var selector = d3.select("#selDataset");
 
   // Use the list of sample names to populate the select options
-  d3.json("samples.json").then((data) => {
+  d3.json("static/data/samples.json").then((data) => {
     var sampleNames = data.names;
 
     sampleNames.forEach((sample) => {
@@ -33,7 +33,7 @@ function optionChanged(newSample) {
 
 // Demographics Panel
 function buildMetadata(sample) {
-  d3.json("samples.json").then((data) => {
+  d3.json("static/data/samples.json").then((data) => {
     var metadata = data.metadata;
     // Filter the data for the object with the desired sample number
     var resultArray = metadata.filter((sampleObj) => sampleObj.id == sample);
@@ -60,7 +60,7 @@ function buildMetadata(sample) {
 // 1. Create the buildCharts function.
 function buildCharts(sample) {
   // 2. Use d3.json to load and retrieve the samples.json file
-  d3.json("samples.json").then((data) => {
+  d3.json("static/data/samples.json").then((data) => {
     // 3. Create a variable that holds the samples array.
     var samples = data.samples;
     // 4. Create a variable that filters the samples for the object with the desired sample number.
@@ -68,7 +68,7 @@ function buildCharts(sample) {
     //console.log(sampleArray);
     //  5. Create a variable that holds the first sample in the array.
     var result = sampleArray[0];
-    console.log(result);
+    //console.log(result);
     // 6. Create variables that hold the otu_ids, otu_labels, and sample_values.
     var otu_ids = result.otu_ids;
     var otu_labels = result.otu_labels;
@@ -94,7 +94,7 @@ function buildCharts(sample) {
       orientation: "h",
     };
 
-    console.log(trace);
+    //console.log(trace);
 
     // 8. Create the trace for the bar chart.
     var barData = [trace];
@@ -107,6 +107,7 @@ function buildCharts(sample) {
         t: 25,
         b: 100,
       },
+      font: { family: "Times", size: 14 },
     };
     // 10. Use Plotly to plot the data with the layout.
     Plotly.newPlot("bar", barData, barLayout);
@@ -131,7 +132,7 @@ function buildCharts(sample) {
     var bubbleLayout = {
       title: {
         text: "<b>Bacteria Cultures Per Sample</b>",
-        font: { size: 24 },
+        font: { family: "Times", size: 30 },
       },
       xaxis: {
         title: {
@@ -174,7 +175,13 @@ function buildCharts(sample) {
     ];
 
     // Create the layout for the gauge chart.
-    var gaugeLayout = { width: 600, height: 400, margin: { t: 0, b: 0 } };
+    var gaugeLayout = {
+      width: 600,
+      height: 400,
+      margin: { t: 0, b: 0 },
+      paper_bgcolor: "DeepSkyBlue",
+      font: { family: "Times" },
+    };
 
     // Use Plotly to plot the gauge data and layout.
     Plotly.newPlot("gauge", gaugeData, gaugeLayout);
